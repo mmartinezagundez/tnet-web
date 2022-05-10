@@ -7,6 +7,7 @@ export abstract class IAuthService {
     // abstract getCurrentToken(): Token;
     
     // abstract getHauntedIndentityId(): string;
+
     abstract setHauntedIndentityId(hauntedIndentityId: string): void;
     
     abstract token(identityId: string, password: string): Observable<void>;

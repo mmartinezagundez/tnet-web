@@ -6,6 +6,7 @@ import { IAuthRepository } from '../repository-contract/auth.repository.contract
 import { TokenMapperService } from './mappers/token-mapper.service';
 import { Token } from '../entities/auth/token';
 import { TokenModel } from 'src/app/3-data/models/auth/token.model';
+import { IMapper } from '../service-contract/mapper.service.contract';
 
 @Injectable({
   providedIn: 'root'
@@ -20,25 +21,25 @@ export class AuthService extends IAuthService {
     private tokenMapper: TokenMapperService
   ) { 
     super();
+    console.log("AuthService Constructor!");        
     this.currentTokenSubject = new BehaviorSubject<Token>(this.tokenMapper.fromModelToEntity(this.authRepository.getCurrentToken()));
     this.currentToken = this.currentTokenSubject.asObservable();
   }
   
-  
   token(identityId: string, password: string): Observable<void> {    
     return this.authRepository.token(identityId, password).pipe(
-      map(token => {        
-        this.authRepository.saveCurrentToken(token);        
-        this.currentTokenSubject.next(token);        
+      map((tokenModel: TokenModel) => {        
+        this.authRepository.saveCurrentToken(tokenModel);        
+        this.currentTokenSubject.next(this.tokenMapper.fromModelToEntity(tokenModel));        
       })
     );
   }
 
   refreshToken(): Observable<void> {
     return this.authRepository.refreshToken(this.currentTokenSubject.value.token, this.currentTokenSubject.value.refreshToken).pipe(
-      map((token: TokenModel) => {
-        this.authRepository.saveCurrentToken(token);        
-        this.currentTokenSubject.next(token);        
+      map((tokenModel: TokenModel) => {
+        this.authRepository.saveCurrentToken(tokenModel);        
+        this.currentTokenSubject.next(this.tokenMapper.fromModelToEntity(tokenModel));        
       })
     );
   }

@@ -15,7 +15,7 @@ export class TokenMapperService extends IMapper<Token, TokenModel> {
     throw new Error('Method not implemented.');
   }
   fromModelToEntity(param: TokenModel): Token {
-    return {
+    return param == null ? null : {
       token: param.token,
       refreshToken: param.refreshToken,      
     };
